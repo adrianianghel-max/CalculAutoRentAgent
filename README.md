@@ -3,6 +3,6 @@
 Pagină publică de pornire pentru aplicația **CalculAutoRent** (repo privat).
 
 - Pagina: https://adrianianghel-max.github.io/CalculAutoRentAgent/
-- Aplicația: https://calcul-auto-rent.pages.dev/ — acces direct prin link, fără autentificare.
+- Aplicația: https://adrianianghel-max.github.io/CalculAutoRentAgent/app/ — acces direct prin link, fără autentificare.
 
-Acest repo nu conține codul aplicației și nici date. Documentele încărcate în aplicație sunt procesate local, în browser.
+Folderul `app/` conține doar aplicația compilată, publicată automat din repo-ul privat. Nu se editează manual. Acest repo nu conține codul sursă și nici date. Documentele încărcate în aplicație sunt procesate local, în browser.

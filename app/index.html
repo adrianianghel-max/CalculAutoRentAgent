@@ -1,16 +1,15 @@
-<!doctype html><html lang="ro"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; connect-src 'self' blob: data: https://calcul-rent-anaf.adrianianghel.workers.dev https://qiaxvebtkvfncookuwpv.supabase.co; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"/><meta name="referrer" content="no-referrer"/><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#00634c"/><meta name="description" content="Calculator reparație și rent auto RCA"/><title>CalculAutoRent</title><link href="/CalculAutoRentAgent/app/static/css/main.9327b982.css" rel="stylesheet"><link rel="stylesheet" href="./auth.css"/></head><body><noscript>Activează JavaScript pentru a folosi calculatorul.</noscript><section id="auth-panel" aria-labelledby="auth-title">
+<!doctype html><html lang="ro"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; connect-src 'self' blob: data: https://calcul-rent-anaf.adrianianghel.workers.dev; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"/><meta name="referrer" content="no-referrer"/><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#00634c"/><meta name="description" content="Calculator reparație și rent auto RCA"/><title>CalculAutoRent</title><link href="/CalculAutoRentAgent/app/static/css/main.9327b982.css" rel="stylesheet"><link rel="stylesheet" href="./auth.css"/></head><body><noscript>Activează JavaScript pentru a folosi calculatorul.</noscript><section id="auth-panel" aria-labelledby="auth-title">
   <div class="auth-card">
     <p class="auth-brand">CalculAutoRent</p>
-    <h1 id="auth-title">Acces privat</h1>
-    <p>Introdu codul primit pe <strong>adrianianghel@yahoo.com</strong>.</p>
-    <p class="auth-note">La fiecare deschidere este necesar un cod nou. Documentele se prelucrează local în browser.</p>
-    <button id="auth-send" type="button" disabled>Trimite codul pe e-mail</button>
-    <form id="auth-form" hidden>
-      <label for="auth-code">Codul din e-mail</label>
-      <input id="auth-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" minlength="6" maxlength="10" required spellcheck="false"/>
-      <button id="auth-verify" type="submit">Intră în aplicație</button>
+    <h1 id="auth-title">Acces cu parolă</h1>
+    <p>Introdu parola ta pentru a deschide aplicația.</p>
+    <p class="auth-note">Parola este verificată local în browser și este cerută la fiecare deschidere. Documentele se prelucrează local.</p>
+    <form id="auth-form">
+      <label for="auth-password">Parola</label>
+      <input id="auth-password" name="password" type="password" autocomplete="current-password" maxlength="1024" required spellcheck="false"/>
+      <button id="auth-unlock" type="submit" disabled>Intră în aplicație</button>
     </form>
-    <p id="auth-status" role="status" aria-live="polite">Se pregătește autentificarea…</p>
+    <p id="auth-status" role="status" aria-live="polite">Se pregătește accesul…</p>
   </div>
 </section>
 <button id="auth-logout" type="button" hidden>Închide sesiunea</button>

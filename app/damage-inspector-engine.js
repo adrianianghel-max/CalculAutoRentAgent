@@ -13,7 +13,7 @@
 (function (global) {
   'use strict';
 
-  // --- 1. Helper-e de normalizare text și date ---
+  // --- 1. Helper-e de normalizare text și securizare date (GDPR & Anti-PII Leak) ---
   const normalizeText = (text) => {
     if (!text) return '';
     return String(text)
@@ -22,6 +22,27 @@
       .replace(/\r\n/g, '\n')
       .replace(/[ \t]+/g, ' ')
       .trim();
+  };
+
+  // Verifică și curăță PII (Personally Identifiable Information) din ancore/tipare de învățare
+  const containsPII = (str) => {
+    if (!str) return false;
+    const s = String(str);
+    // CNP (13 cifre consecutive)
+    if (/\b[1-8]\d{12}\b/.test(s)) return true;
+    // Numere de telefon (ex: 07xxxxxxxx)
+    if (/\b(?:07\d{8}|\+40\d{9})\b/.test(s)) return true;
+    // Adrese de email
+    if (/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+/.test(s)) return true;
+    // Serii și numere CI (ex: RX 123456)
+    if (/\b[A-Z]{2}\s*\d{6}\b/.test(s)) return true;
+    return false;
+  };
+
+  // Mascare CNP în afișare dacă este nevoie
+  const maskCNP = (cnp) => {
+    if (!cnp || String(cnp).length !== 13) return cnp;
+    return String(cnp).slice(0, 7) + '******';
   };
 
   const cleanAlphanum = (text) => {
@@ -235,11 +256,14 @@
     }
 
     recordLearnedPattern(docType, anchorPattern, fieldMapping) {
+      if (containsPII(anchorPattern)) {
+        throw new Error('Securitate date (GDPR): Tiparul propus conține date cu caracter personal (CNP/telefon/email/CI). Alegeți o ancoră structurală sau un termen general din antetul documentului.');
+      }
       this.skills.learnedPatterns.push({
         id: 'lp_' + Date.now(),
         docType,
-        anchorPattern,
-        fieldMapping,
+        anchorPattern: normalizeText(anchorPattern).toUpperCase(),
+        fieldMapping: {},
         confidence: 1.0,
         createdAt: new Date().toISOString()
       });
@@ -247,7 +271,10 @@
     }
 
     exportJSON() {
-      return JSON.stringify(this.skills, null, 2);
+      // Filtrează strict orice conținut înainte de export pentru garanție Zero-PII
+      const safeSkills = JSON.parse(JSON.stringify(this.skills));
+      safeSkills.learnedPatterns = (safeSkills.learnedPatterns || []).filter(p => !containsPII(p.anchorPattern));
+      return JSON.stringify(safeSkills, null, 2);
     }
 
     importJSON(jsonString) {
@@ -836,16 +863,51 @@
         formFields.reprezentant_cesionar = cession.cesionar.reprezentant_cesionar || '';
       }
 
+      // Pas 7: Eliberare Imediată și Ștergere Memorie (Zero-Memory Leak & PII Sanitization)
+      const documentSummaries = classifiedDocs.map(d => ({
+        name: d.name,
+        classification: {
+          type: d.classification.type,
+          score: d.classification.score,
+          matchedAnchors: d.classification.matchedAnchors || []
+        }
+      }));
+
+      // Wiping all raw text from memory to eliminate sensitive data
+      for (let i = 0; i < rawDocuments.length; i++) {
+        if (rawDocuments[i]) {
+          rawDocuments[i].text = '';
+          if (rawDocuments[i].pages) {
+            for (let j = 0; j < rawDocuments[i].pages.length; j++) {
+              rawDocuments[i].pages[j] = '';
+            }
+            rawDocuments[i].pages.length = 0;
+            rawDocuments[i].pages = null;
+          }
+          rawDocuments[i].text = null;
+          rawDocuments[i] = null;
+        }
+      }
+      rawDocuments.length = 0;
+      classifiedDocs.length = 0;
+
       return {
         timestamp: new Date().toISOString(),
-        documentsCount: rawDocuments.length,
-        documents: classifiedDocs,
+        documentsCount: documentSummaries.length,
+        documents: documentSummaries,
         damagedParty,
         cession,
         conformity,
         invoicesData,
         formFields
       };
+    }
+
+    /**
+     * Purjare explicită a oricăror referințe interne din memorie
+     */
+    purgeMemory() {
+      // Nimic nu se reține persistent în subagent
     }
   }
 

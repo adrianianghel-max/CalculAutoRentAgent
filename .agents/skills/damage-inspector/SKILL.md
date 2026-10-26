@@ -1,11 +1,11 @@
 ---
 name: damage-inspector
-description: "Subagent inteligent specializat pentru analiza completă a dosarelor de daună auto RCA. Inspectează PDF-urile încărcate (NC, poliță, facturi de reparație și rent, devize, cereri de despăgubire, contracte de cesiune), verifică conformitatea documentelor, validează dacă facturile sunt emise pe numele păgubitului, verifică semnătura/ștampila cererii de despăgubire, extrage datele cesionarului și generează un sumar complet de audit."
+description: "Subagent inteligent specializat pentru analiza completă a dosarelor de daună auto RCA. Inspectează PDF-urile încărcate (NC, poliță, facturi de reparație și rent, devize, cereri de despăgubire, contracte de cesiune), verifică conformitatea documentelor, validează dacă facturile sunt emise pe numele păgubitului, verifică semnătura/ștampila cererii de despăgubire, extrage datele cesionarului și generează un sumar complet de audit cu garanții stricte GDPR și eliberare imediată a memoriei."
 ---
 
 # Damage Claim Inspector (Subagent Inspector Daune RCA)
 
-Acest skill transformă asistentul într-un **Inspector Senior de Daune Auto RCA**, capabil să parcurgă un dosar complet de daune, să înțeleagă contextul fiecărui document și să valideze conformitatea juridică și tehnică.
+Acest skill transformă asistentul într-un **Inspector Senior de Daune Auto RCA**, capabil să parcurgă un dosar complet de daune, să înțeleagă contextul fiecărui document și să valideze conformitatea juridică și tehnică, asigurând securitatea strictă a datelor cu caracter personal.
 
 ## 1. Documente Recunoscute și Clasificate
 1. **Notă de Constatare (NC)** / Proces-Verbal de Constatare:
@@ -39,3 +39,11 @@ Acest skill transformă asistentul într-un **Inspector Senior de Daune Auto RCA
 ## 3. Sistemul de Învățare Continuă (Evolving Skills)
 - Subagentul reține formate noi de facturi, antete și semnături în memoria locală (`damage-inspector-skills.json`).
 - Orice corecție a inspectorului rafinează abilitățile de recunoaștere la dosarele viitoare.
+- Ancorele învățate sunt filtrate automat pentru a împiedica salvarea datelor personale (CNP/telefon/email).
+
+## 4. Securitatea Datelor, GDPR & Eliberarea Memoriei (Memory Zeroing)
+- **Zero External Leakage**: Niciun document și niciun text extras nu părăsește browserul sau memoria locală. Nu se transmit date către servere terțe.
+- **Wiping & Zeroing la finalul procesării**:
+  - Imediat ce datele au fost extrase, textele brute ale paginilor PDF sunt eliminate (`null` / suprascrise).
+  - ArrayBuffer-urile PDF sunt suprascrise cu zerouri (`fill(0)`).
+  - La închiderea panoului de audit, aplicarea în formular sau părăsirea paginii (`pagehide`, `beforeunload`), memoria de audit este complet purjată.

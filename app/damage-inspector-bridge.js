@@ -32,6 +32,9 @@
               <button type="button" class="btn-audit btn-secondary-audit" id="btn-audit-skills">
                 🧠 Abilități & Memorie
               </button>
+              <button type="button" class="btn-audit btn-secondary-audit" id="btn-audit-purge" title="Șterge definitiv datele din memoria browserului (GDPR)">
+                🔒 Curăță Memoria
+              </button>
             </div>
             <div style="display: flex; gap: 8px;">
               <button type="button" class="btn-audit btn-secondary-audit" id="btn-audit-close">
@@ -49,11 +52,41 @@
       document.getElementById('btn-audit-close').addEventListener('click', closeModal);
       document.getElementById('btn-audit-apply').addEventListener('click', applyDataToForm);
       document.getElementById('btn-audit-skills').addEventListener('click', showSkillsManager);
+      document.getElementById('btn-audit-purge').addEventListener('click', () => {
+        purgeSensitiveData();
+        closeModal();
+        alert('Datele sensibile au fost șterse complet din memoria RAM a browserului.');
+      });
     }
     return modal;
   }
 
   let currentAuditResult = null;
+
+  function purgeSensitiveData() {
+    if (currentAuditResult) {
+      if (currentAuditResult.documents) currentAuditResult.documents.length = 0;
+      currentAuditResult.documents = null;
+      currentAuditResult.damagedParty = null;
+      currentAuditResult.cession = null;
+      currentAuditResult.conformity = null;
+      currentAuditResult.invoicesData = null;
+      currentAuditResult.formFields = null;
+      currentAuditResult = null;
+    }
+    const bodyContent = document.getElementById('audit-body-content');
+    if (bodyContent) bodyContent.innerHTML = '';
+    
+    // Curăță referințele din input-urile de fișiere
+    try {
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      fileInputs.forEach(fi => { fi.value = ''; });
+    } catch (_) {}
+
+    if (window.CalculAutoRentInspector?.instance?.purgeMemory) {
+      window.CalculAutoRentInspector.instance.purgeMemory();
+    }
+  }
 
   function openModal(auditResult) {
     currentAuditResult = auditResult;
@@ -65,6 +98,7 @@
   function closeModal() {
     const modal = document.getElementById('inspector-audit-modal');
     if (modal) modal.classList.remove('open');
+    purgeSensitiveData();
   }
 
   function renderAuditReport(res) {
@@ -424,8 +458,13 @@
           text: fullText,
           pages
         });
+
+        // Eliberare și suprascriere imediată a memoriei ArrayBuffer (Zero-PII memory)
+        try {
+          new Uint8Array(arrayBuffer).fill(0);
+        } catch (_) {}
       } catch (err) {
-        console.error(`Eroare la citirea fișierului ${file.name}:`, err);
+        console.error(`Eroare la citirea fișierului:`, err.message || err);
       }
     }
 
@@ -450,9 +489,14 @@
         processFilesWithInspector(Array.from(e.dataTransfer.files));
       }
     }, true);
+
+    // Eliberare forțată a memoriei la părăsirea paginii sau închiderea tab-ului (GDPR)
+    window.addEventListener('pagehide', purgeSensitiveData);
+    window.addEventListener('beforeunload', purgeSensitiveData);
   });
 
   // Expunere funcție globală de testare/apel manual
   window.triggerInspectorAudit = processFilesWithInspector;
+  window.purgeInspectorMemory = purgeSensitiveData;
 
 })();

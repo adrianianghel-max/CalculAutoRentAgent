@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/CalculAutoRentAgent/app/static/css/main.bf95f14a.css",
+    "main.css": "/CalculAutoRentAgent/app/static/css/main.b721142a.css",
     "static/js/797.f8236d8a.chunk.js": "/CalculAutoRentAgent/app/static/js/797.f8236d8a.chunk.js",
     "static/js/52.3b8ee536.chunk.js": "/CalculAutoRentAgent/app/static/js/52.3b8ee536.chunk.js",
     "static/js/760.833aad55.chunk.js": "/CalculAutoRentAgent/app/static/js/760.833aad55.chunk.js",
     "static/js/265.55c4a7e3.chunk.js": "/CalculAutoRentAgent/app/static/js/265.55c4a7e3.chunk.js",
     "index.html": "/CalculAutoRentAgent/app/index.html",
-    "main.js.enc": "/CalculAutoRentAgent/app/static/js/main.1d8d61c3.js.enc"
+    "main.js.enc": "/CalculAutoRentAgent/app/static/js/main.bee3aa3e.js.enc"
   },
   "entrypoints": [
-    "static/css/main.bf95f14a.css"
+    "static/css/main.b721142a.css"
   ]
 }
